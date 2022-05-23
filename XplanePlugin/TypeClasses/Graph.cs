@@ -76,227 +76,17 @@ namespace Loupedeck.XplanePlugin.TypeClasses
             float degRng = degMax - degMin;
             float degPerVal = degRng / valRng;
 
-            float deg = val * degPerVal;
-            int x1 = this.getCircleX(deg, this.rLine)+x0;
+            float deg = (((val - red_lo) * degPerVal) * -1) + 180;
+            int x1 = this.getCircleX(deg, this.rLine) + x0;
             int y1 = y0 - (this.getCircleY(deg, this.rLine));
-            Debug.WriteLine($" Value {val} bei max Winkel {angle_max - angle_min} und max. Wert {value_max} ergibt {deg}");
+            Debug.WriteLine($" Value {val} bei max Winkel {angle_max - angle_min} und max. Wert {value_max} bei degPerVal{degPerVal} ergibt {deg}");
             Debug.WriteLine($"Koordinaten für Linie x0={x0}, y0={y0}, x1={x1}, y1={y1}");
-            this.builder.DrawLine(x0, y0,x1 ,y1, lineColor, strokeLine);
+            this.builder.DrawLine(x0, y0, x1, y1, lineColor, strokeLine);
 
         }
 
+        
         public void drawArcs() {
-            int arc_total = angle_max - (angle_min);
-
-            float vmax = red_lo + yellow_lo + green_lo + green_hi + yellow_hi + red_hi;
-
-            float sumact = 0;
-
-            float arc_low = angle_min;
-            float arcdeg =(float)(((red_lo - sumact) / vmax) * arc_total);
-            if (arcdeg < 0) { arcdeg = 0; }
-            BitmapColor clr = arcBlueColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, arc_low, arcdeg, clr, this.strokeArc);
-            sumact += red_lo;
-
-            Debug.WriteLine($"arc_low: {arc_low}, arcdec: {arcdeg}");
-
-            arc_low = arc_low + arcdeg;
-            arcdeg = (float)(((yellow_lo-sumact) / vmax) * arc_total);
-            if (arcdeg < 0)
-            { arcdeg = 0; }
-            clr = arcRedColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, arc_low, arcdeg, clr, this.strokeArc);
-            sumact += yellow_lo;
-
-            Debug.WriteLine($"arc_low: {arc_low}, arcdec: {arcdeg}");
-
-            arc_low = arc_low + arcdeg;
-            arcdeg = (float)(((green_lo-sumact) / vmax) * arc_total);
-            if (arcdeg < 0)
-            { arcdeg = 0; }
-            clr = arcYellowColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, arc_low, arcdeg, clr, this.strokeArc);
-            sumact += green_lo;
-
-            Debug.WriteLine($"arc_low: {arc_low}, arcdec: {arcdeg}");
-
-            arc_low = arc_low + arcdeg;
-            arcdeg = (float)(((green_hi-sumact) / vmax) * arc_total);
-            if (arcdeg < 0)
-            { arcdeg = 0; }
-            clr = arcGreenColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, arc_low, arcdeg, clr, this.strokeArc);
-            sumact += green_hi;
-
-            Debug.WriteLine($"arc_low: {arc_low}, arcdec: {arcdeg}");
-
-            arc_low = arc_low + arcdeg;
-            arcdeg = (float)(((yellow_hi-sumact) / vmax) * arc_total);
-            if (arcdeg < 0)
-            { arcdeg = 0; }
-            clr = arcYellowColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, arc_low, arcdeg, clr, this.strokeArc);
-            sumact += yellow_hi;
-
-            Debug.WriteLine($"arc_low: {arc_low}, arcdec: {arcdeg}");
-
-            arc_low = arc_low + arcdeg;
-            arcdeg = (float)(((red_hi-sumact) / vmax) * arc_total);
-            if (arcdeg < 0)
-            { arcdeg = 0; }
-            clr = arcRedColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, arc_low, arcdeg, clr, this.strokeArc);
-            sumact += red_hi;
-
-            Debug.WriteLine($"arc_low: {arc_low}, arcdec: {arcdeg}");
-
-            arc_low = arc_low + arcdeg;
-            arcdeg = (float)(((vmax) / vmax) * arc_total)-arcdeg;
-            if (arcdeg < 0)
-            { arcdeg = 0; }
-            clr = arcBlueColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, arc_low, arcdeg, clr, this.strokeArc);
-
-            Debug.WriteLine($"arc_low: {arc_low}, arcdec: {arcdeg}");
-        }
-
-
-        public void drawArcs2()
-        {
-            int arc_offset = 180;
-            int arc_total = angle_max - (angle_min+arc_offset);
-            float vRange = value_max - value_min;
-            float degProVal = arc_total / vRange;
-            float curAngle = arc_offset;
-            float curVal = 0;
-            float curMaxVal = 0;
-
-            Debug.WriteLine($"arc_total: {arc_total}, vRange:{vRange}, degProVal:{degProVal}");
-
-
-            float angle = red_lo * degProVal;
-            Debug.WriteLine($"curAngle: {curAngle}, curVal: {curVal}, angle: {angle}");
-            BitmapColor clr = this.arcBlueColor;
-           builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
-
-            curVal += red_lo;
-            if (red_lo>curMaxVal)
-            { curMaxVal = red_lo; }
-            curAngle += angle;
-
-            if (yellow_lo > red_lo)
-            {
-                angle = (yellow_lo - curMaxVal) * degProVal;
-                if (angle < 0)
-                { angle = 0; }
-            }
-            else
-            {
-                angle = 0;
-            }
-            Debug.WriteLine($"curAngle: {curAngle}, curVal: {curVal}, angle: {angle}");
-            clr = arcRedColor;
-
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
-
-            curVal += yellow_lo;
-            if (yellow_lo > curMaxVal)
-            { curMaxVal = yellow_lo; }
-            curAngle += angle;
-
-            if (green_lo > yellow_lo)
-            {
-                angle = (green_lo - curMaxVal) * degProVal;
-                if (angle < 0)
-                { angle = 0; }
-            }
-            else
-            {
-                angle = 0;
-            }
-            Debug.WriteLine($"curAngle: {curAngle}, curVal: {curVal}, angle: {angle}");
-            clr = arcYellowColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
-            curVal += green_lo;
-            if (green_lo > curMaxVal)
-            { curMaxVal = green_lo; }
-            curAngle += angle;
-
-            if (green_hi > green_lo)
-            {
-                angle = (green_hi - curMaxVal) * degProVal;
-                if (angle < 0)
-                { angle = 0; }
-            }
-            else
-            {
-                angle = 0;
-            }
-            Debug.WriteLine($"curAngle: {curAngle}, curVal: {curVal}, angle: {angle}");
-            clr = arcGreenColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
-            curVal += green_hi;
-            if (green_hi > curMaxVal)
-            { curMaxVal = green_hi; }
-            curAngle += angle;
-
-            if (yellow_hi > green_hi)
-            {
-                angle = (yellow_hi - curMaxVal) * degProVal;
-                if (angle < 0)
-                { angle = 0; }
-            }
-            else
-            {
-                angle = 0;
-            }
-            Debug.WriteLine($"curAngle: {curAngle}, curVal: {curVal}, angle: {angle}");
-            clr = arcYellowColor;
-
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
-            curVal += yellow_hi;
-            if (yellow_hi > curMaxVal)
-            { curMaxVal = yellow_hi; }
-            curAngle += angle;
-
-            if (red_hi > yellow_hi)
-            {
-                angle = (red_hi - curMaxVal) * degProVal;
-                if (angle < 0)
-                { angle = 0; }
-            }
-            else
-            {
-                angle = 0;
-            }
-            Debug.WriteLine($"curAngle: {curAngle}, curVal: {curVal}, angle: {angle}");
-            clr = arcRedColor;
-
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
-            curVal += red_hi;
-            if (red_hi > curMaxVal)
-            { curMaxVal = red_hi; }
-            curAngle += angle;
-
-            if (value_max > red_hi)
-            {
-                angle = (value_max - curMaxVal) * degProVal;
-                if (angle < 0)
-                { angle = 0; }
-            }
-            else
-            {
-                angle = 0;
-            }
-            Debug.WriteLine($"curAngle: {curAngle}, curVal: {curVal}, angle: {angle}");
-            clr = arcBlueColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
-        }
-
-
-
-        public void drawArcs3() {
             float valRng = red_hi - red_lo;
             float degMin = 180;
             float degMax = 360;
@@ -369,14 +159,7 @@ namespace Loupedeck.XplanePlugin.TypeClasses
             clr = arcRedColor;
             builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
             curAngle += angle;
-
-
-
-
-
         }
-
-
 
 
         public int getCircleY(float winkel, int r)
@@ -455,11 +238,11 @@ namespace Loupedeck.XplanePlugin.TypeClasses
         {
             this.init();
             //this.demo();
-            if (val < this.value_min)
-            { val = this.value_min; }
-            if (val > value_max)
-            { val = this.value_max; }
-            this.drawArcs3();
+            if (val < this.red_lo)
+            { val = this.red_lo; }
+            if (val > red_hi)
+            { val = this.red_hi; }
+            this.drawArcs();
             this.drawValue(val);
             return this.builder.ToImage();
 
