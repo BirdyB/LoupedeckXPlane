@@ -20,6 +20,18 @@ namespace Loupedeck.XplanePlugin.SupportClasses
         public static BitmapColor globalIconColor { get; set; } = ButtonImages.White;
         public static BitmapColor globalTextColor { get; set; } = ButtonImages.Black;
 
+        //Create Background with rounded Edges
+        public static BitmapImage bgRoundEdge80;
+
+        public static void init() {
+
+            //Vorab die Hintergrundgrafik erstellen (Nicht genutzt wegen wechselnder Farben...)
+            BitmapBuilder bgbuilder = new BitmapBuilder(80,80);
+            ButtonImages.RoundEdge(ref bgbuilder, 5, 5, 70, 70, 20, globalIconColor);
+            bgRoundEdge80 = bgbuilder.ToImage();
+
+        }
+
 
         //Image Definitions with (size, text, image)
         public static BitmapImage buttonImageText(PluginImageSize imageSize, string text, string image, BitmapColor iconColor, BitmapColor textColor) {

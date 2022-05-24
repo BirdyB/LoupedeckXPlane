@@ -74,7 +74,8 @@ namespace Loupedeck.XplanePlugin.Buttons
 
             return builder.ToImage(); */
 
-            var graph = new TypeClasses.Graph(0,120,20,40,60,80,100,120);
+            var graph = new TypeClasses.Graph(20,40,60,80,100,120);
+            graph.init();
             BitmapImage graphpic = graph.getGraph(70);
 
             return SupportClasses.ButtonImages._standardImageGraph(imageSize,BitmapColor.White,BitmapColor.Black,"Test",graphpic);

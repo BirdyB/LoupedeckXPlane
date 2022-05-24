@@ -25,7 +25,9 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         public int num_batteries;
         public int num_generators;
 
-        public TypeClasses.Graph BatGraph = new TypeClasses.Graph(0,30,0,0,0,0,0,0);
+        public TypeClasses.Graph BatGraph = new TypeClasses.Graph(0,0,0,0,0,0);
+        public TypeClasses.Graph BatAmp = new TypeClasses.Graph();
+        public TypeClasses.Graph GenAmp = new TypeClasses.Graph();
 
 
         public override Boolean Activate() {
@@ -46,6 +48,25 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             BatGraph.green_hi = SupportClasses.BoundariesData.getValue("green_hi_BatVolts");
             BatGraph.yellow_hi = SupportClasses.BoundariesData.getValue("yellow_hi_BatVolts");
             BatGraph.red_hi = SupportClasses.BoundariesData.getValue("red_hi_BatVolts");
+            BatGraph.init();
+
+            //BatAmp.red_lo = SupportClasses.BoundariesData.getValue("red_lo_BatAmp");
+            BatAmp.red_lo = SupportClasses.BoundariesData.getValue("red_hi_BatAmp")*-1;
+            BatAmp.yellow_lo = BatAmp.red_hi * (float)0.2;
+            BatAmp.green_lo = 0;
+            BatAmp.yellow_hi = 0;
+            BatAmp.red_hi = SupportClasses.BoundariesData.getValue("red_hi_BatAmp");
+            BatAmp.green_hi = BatAmp.red_hi * (float)0.8;
+            BatAmp.init();
+
+            GenAmp.red_lo = SupportClasses.BoundariesData.getValue("red_lo_BatAmp");
+            GenAmp.yellow_lo = BatAmp.red_hi * (float)0.2;
+            GenAmp.green_lo = 0;
+            GenAmp.yellow_hi = 0;
+            GenAmp.red_hi = SupportClasses.BoundariesData.getValue("red_hi_BatAmp");
+            GenAmp.green_hi = BatAmp.red_hi * (float)0.8;
+            GenAmp.init();
+
 
 
             SupportClasses.SubscriptionHandler.OnValueChanged += this.SubscriptionHandler_OnValueChanged;
@@ -71,6 +92,15 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                         this._buttons[$"BatVolt {value.getIndex() + 1}"].value = value.value;
                         this.CommandImageChanged($"BatVolt {value.getIndex() + 1}");
                         break;
+                    case string s when s.Contains("sim/flightmodel/engine/ENGN_bat_amp"):
+                        this._buttons[$"BatAmp {value.getIndex() + 1}"].value = value.value;
+                        this.CommandImageChanged($"BatAmp {value.getIndex() + 1}");
+                        break;
+                    case string s when s.Contains("sim/flightmodel/engine/ENGN_gen_amp"):
+                        this._buttons[$"GenAmp {value.getIndex() + 1}"].value = value.value;
+                        this.CommandImageChanged($"GenAmp {value.getIndex() + 1}");
+                        break;
+
                     default:
                         break;
 
@@ -113,6 +143,32 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     dataRef = new DataRefElement
                     {
                         DataRef = $"sim/flightmodel/engine/ENGN_bat_volt[{i}]",
+                        Frequency = 5
+                    },
+                    displayName = this.DisplayName
+                });
+            }
+
+            for (int i = 0; i < this.num_batteries; i++)
+            {
+                SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
+                {
+                    dataRef = new DataRefElement
+                    {
+                        DataRef = $"sim/flightmodel/engine/ENGN_bat_amp[{i}]",
+                        Frequency = 5
+                    },
+                    displayName = this.DisplayName
+                });
+            }
+
+            for (int i = 0; i < this.num_generators; i++)
+            {
+                SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
+                {
+                    dataRef = new DataRefElement
+                    {
+                        DataRef = $"sim/flightmodel/engine/ENGN_gen_amp[{i}]",
                         Frequency = 5
                     },
                     displayName = this.DisplayName
@@ -229,12 +285,50 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     return SupportClasses.ButtonImages._standardImageGraph(size, BitmapColor.White, BitmapColor.Black, $"Bat {btn.loop + 1}:\r\n{btn.getDisplayValue()}",BatGraph.getGraph(btn.value));
 
                 };
-            }
                 this._buttons.Add(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
+            }
+
+            for (int i = 0; i < this.num_batteries; i++)
+            {
+                temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
+                temp.id = $"BatAmp {i + 1}";
+                temp.caption = $"BatAmp {i + 1}";
+                temp.loop = i;
+                temp.command = Commands.NoneNone;
+                temp.unit = "Amp";
+                temp.format = "n1";
+                temp.GetImage = (size, btn) =>
+                {
+                    return SupportClasses.ButtonImages._standardImageGraph(size, BitmapColor.White, BitmapColor.Black, $"Bat {btn.loop + 1}:\r\n{btn.getDisplayValue()}", BatAmp.getGraph(btn.value));
+
+                };
+                this._buttons.Add(temp.id, temp);
+                temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
+            }
+
+            for (int i = 0; i < this.num_generators; i++)
+            {
+                temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
+                temp.id = $"GenAmp {i + 1}";
+                temp.caption = $"GenAmp {i + 1}";
+                temp.loop = i;
+                temp.command = Commands.NoneNone;
+                temp.unit = "Amp";
+                temp.format = "n1";
+                temp.GetImage = (size, btn) =>
+                {
+                    return SupportClasses.ButtonImages._standardImageGraph(size, BitmapColor.White, BitmapColor.Black, $"Gen {btn.loop + 1}:\r\n{btn.getDisplayValue()}", GenAmp.getGraph(btn.value));
+
+                };
+                this._buttons.Add(temp.id, temp);
+                temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
+            }
 
 
-                base.FillButtons();
+
+
+            base.FillButtons();
         }
 
 

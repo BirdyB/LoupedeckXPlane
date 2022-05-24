@@ -40,32 +40,41 @@ namespace Loupedeck.XplanePlugin.TypeClasses
         public float yellow_hi = 50;
         public float red_hi = 60;
 
-        public float value_min = 0;
-        public float value_max = 80;
-
         //current value
         public float value;
 
         //bitmap builder
         public BitmapBuilder builder = new BitmapBuilder(60, 40);
+        public BitmapBuilder scaleBuilder = new BitmapBuilder(60, 40);
+
+        private BitmapImage scale;
 
 
 
-        public Graph(float value_min, float value_max, float red_lo, float yellow_lo,float green_lo, float green_hi, float yellow_hi, float red_hi)
+        public Graph(float red_lo, float yellow_lo,float green_lo, float green_hi, float yellow_hi, float red_hi)
         {
-            this.value_min = value_min;
-            this.value_max = value_max;
             this.red_lo = red_lo;
             this.yellow_lo = yellow_lo;
             this.green_lo = green_lo;
             this.green_hi = green_hi;
             this.yellow_hi = yellow_hi;
             this.red_hi = red_hi;
+
+        }
+
+        public Graph() {
+            this.red_lo = 0;
+            this.yellow_lo = 0;
+            this.green_lo = 0;
+            this.green_hi = 0;
+            this.yellow_hi = 0;
+            this.red_hi = 0;
         }
 
         public void init()
         {
             builder.Clear(bgColor);
+            this.scale = drawArcs();
         }
 
 
@@ -79,15 +88,16 @@ namespace Loupedeck.XplanePlugin.TypeClasses
             float deg = (((val - red_lo) * degPerVal) * -1) + 180;
             int x1 = this.getCircleX(deg, this.rLine) + x0;
             int y1 = y0 - (this.getCircleY(deg, this.rLine));
-            Debug.WriteLine($" Value {val} bei max Winkel {angle_max - angle_min} und max. Wert {value_max} bei degPerVal{degPerVal} ergibt {deg}");
+            Debug.WriteLine($" Value {val} bei max Winkel {angle_max - angle_min} und max. Wert {red_hi} bei degPerVal{degPerVal} ergibt {deg}");
             Debug.WriteLine($"Koordinaten für Linie x0={x0}, y0={y0}, x1={x1}, y1={y1}");
             this.builder.DrawLine(x0, y0, x1, y1, lineColor, strokeLine);
 
         }
 
         
-        public void drawArcs() {
-            float valRng = red_hi - red_lo;
+        public BitmapImage drawArcs() {
+            BitmapBuilder tempbuilder = new BitmapBuilder(60, 40);
+        float valRng = red_hi - red_lo;
             float degMin = 180;
             float degMax = 360;
             float degRng = degMax - degMin;
@@ -105,7 +115,7 @@ namespace Loupedeck.XplanePlugin.TypeClasses
                 angle = 0;
             }
             BitmapColor clr = arcRedColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
+            tempbuilder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
             curAngle += angle;
 
             if (green_lo > curMax)
@@ -118,7 +128,7 @@ namespace Loupedeck.XplanePlugin.TypeClasses
                 angle = 0;
             }
             clr = arcYellowColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
+            tempbuilder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
             curAngle += angle;
 
             if (green_hi > curMax)
@@ -131,7 +141,7 @@ namespace Loupedeck.XplanePlugin.TypeClasses
                 angle = 0;
             }
             clr = arcGreenColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
+            tempbuilder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
             curAngle += angle;
 
             if (yellow_hi > curMax)
@@ -144,7 +154,7 @@ namespace Loupedeck.XplanePlugin.TypeClasses
                 angle = 0;
             }
             clr = arcYellowColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
+            tempbuilder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
             curAngle += angle;
 
             if (red_hi > curMax)
@@ -157,8 +167,10 @@ namespace Loupedeck.XplanePlugin.TypeClasses
                 angle = 0;
             }
             clr = arcRedColor;
-            builder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
+            tempbuilder.DrawArc(this.x0, this.y0, this.rArc, curAngle, angle, clr, this.strokeArc);
             curAngle += angle;
+
+            return tempbuilder.ToImage();
         }
 
 
@@ -189,62 +201,19 @@ namespace Loupedeck.XplanePlugin.TypeClasses
 
         }
 
-        public void demo()
-        {
-            int rline = this.rArc + 2;
-
-            int offset = 0;
-
-            /*
-            builder.DrawLine(x0, 0, x0, 60, new BitmapColor(255, 0, 0), 1);
-
-            builder.DrawLine(0, y0, 60, y0, new BitmapColor(255, 0, 0), 1);
-            */
-
-            offset = 0;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 10;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 20;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 45;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 90;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 135;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 180;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 225;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 270;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            offset = 315;
-            this.builder.DrawLine(x0, y0, this.getCircleX(offset, rline) + x0, (this.getCircleY(offset, rline)) + y0, lineColor, 1);
-
-            //this.builder.DrawArc(x0, y0, this.rArc, 270, 90, arcGreenColor, 1);
-        }
-
         public BitmapImage getGraph(float val = 40)
         {
-            this.init();
-            //this.demo();
+            //this.init();
             if (val < this.red_lo)
             { val = this.red_lo; }
             if (val > red_hi)
             { val = this.red_hi; }
-            this.drawArcs();
+            builder.Clear(bgColor);
+            builder.DrawImage(scale);
             this.drawValue(val);
-            return this.builder.ToImage();
+            BitmapImage output = this.builder.ToImage();
+
+            return output;
 
         }
 
