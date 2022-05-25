@@ -34,6 +34,7 @@ namespace Loupedeck.XplanePlugin.SupportClasses
             data.Add(new PlaneValue { id = "num_generators", dataRef = DataRefs.AircraftElectricalNumGenerators});
             data.Add(new PlaneValue { id = "num_inverters", dataRef = DataRefs.AircraftElectricalNumInverters });
             data.Add(new PlaneValue { id = "num_buses", dataRef = DataRefs.AircraftElectricalNumBuses});
+            data.Add(new PlaneValue { id = "num_tanks", dataRef = DataRefs.AircraftOverflowAcfNumTanks });
             data.Add(new PlaneValue { id = "acf_en_type", dataRef = DataRefs.AircraftPropAcfEnType}); //engine type – read only in v11, but you should NEVER EVER write this in v10 or earlier. 0=recip carb, 1=recip injected, 2=free turbine, 3=electric, 4=lo bypass jet, 5=hi bypass jet, 6=rocket, 7=tip rockets, 8=fixed turbine
             data.Add(new PlaneValue { id = "acf_gear_retract", dataRef = DataRefs.AircraftGearAcfGearRetract });
             data.Add(new PlaneValue { id = "fdir_needed_to_engage_servos", dataRef = DataRefs.AircraftSystemsFdirNeededToEngageServos });
@@ -67,11 +68,15 @@ namespace Loupedeck.XplanePlugin.SupportClasses
                         complete = false;
                     }
                     System.Threading.Thread.Sleep(10);
-                    Debug.WriteLine($"{DateTime.Now} - Durchlauf {i} - Daten noch nicht vollständig");
+                    Debug.WriteLine($"{DateTime.Now} - Plane-Data - Durchlauf {i} - Daten noch nicht vollständig");
                 }
             }
             AirplaneData.complete = true;
-            Debug.WriteLine($"{DateTime.Now} - Daten vollständig - Unsubscribing");
+            Debug.WriteLine($"{DateTime.Now} - Plane-Data - Daten vollständig - Unsubscribing");
+            foreach(PlaneValue pv in data)
+            {
+                Console.WriteLine($"{pv.id}: \t {pv.value}");
+            }
 
             Task.Run(() => {
                 foreach (PlaneValue item in data)

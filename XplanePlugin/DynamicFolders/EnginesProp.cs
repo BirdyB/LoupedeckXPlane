@@ -36,6 +36,22 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             this.FillSubscriptions();
             this.ButtonActionNamesChanged();
             SupportClasses.SubscriptionHandler.OnValueChanged += this.SubscriptionHandler_OnValueChanged;
+            FuelLeft.red_lo = 0;
+            FuelLeft.yellow_lo = 15;
+            FuelLeft.green_lo = 15;
+            FuelLeft.green_hi = 100;
+            FuelLeft.yellow_hi = 100;
+            FuelLeft.red_hi = 100;
+
+            FuelRight.red_lo = 0;
+            FuelRight.yellow_lo = 15;
+            FuelRight.green_lo = 15;
+            FuelRight.green_hi = 100;
+            FuelRight.yellow_hi = 100;
+            FuelRight.red_hi = 100;
+            this.FuelLeft.init();
+            this.FuelRight.init();
+
 
             return base.Activate();
         }
@@ -72,9 +88,20 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                         this._buttons[$"PumpEngine {value.getIndex() + 1}"].value = value.value;
                         this.CommandImageChanged($"PumpEngine {value.getIndex() + 1}");
                         break;
+
                     case string s when s.Contains("sim/flightmodel/engine/ENGN_prop"):
                         this._adjustments[$"Prop {value.getIndex()}"].freq = value.value;
                         this.AdjustmentValueChanged($"Prop {value.getIndex()}");
+                        break;
+
+                    case string s when s.Contains("sim/cockpit2/fuel/fuel_level_indicated_left"):
+                        this._buttons[$"FuelLeft"].value = value.value;
+                        this.CommandImageChanged($"FuelLeft");
+                        break;
+
+                    case string s when s.Contains("sim/cockpit2/fuel/fuel_level_indicated_right"):
+                        this._buttons[$"FuelRight"].value = value.value;
+                        this.CommandImageChanged($"FuelRight");
                         break;
 
                     default:
@@ -90,6 +117,8 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         private bool[] _starterEngaged = new bool[8] { false, false, false, false, false, false, false, false };
         Task toggleButtons;
         System.Threading.CancellationTokenSource _starterToken;
+        public TypeClasses.Graph FuelLeft = new TypeClasses.Graph();
+        public TypeClasses.Graph FuelRight = new TypeClasses.Graph();
 
 
 
@@ -147,6 +176,27 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     displayName = this.DisplayName
                 });
             }
+            SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
+            {
+                dataRef = new DataRefElement
+                {
+                    DataRef = $"sim/cockpit2/fuel/fuel_level_indicated_left",
+                    Frequency = 5
+                },
+                displayName = this.DisplayName
+            });
+
+            SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
+            {
+                dataRef = new DataRefElement
+                {
+                    DataRef = $"sim/cockpit2/fuel/fuel_level_indicated_right",
+                    Frequency = 5
+                },
+                displayName = this.DisplayName
+            });
+
+
             base.FillSubscriptions();
         }
         protected override void FillAdjustments()
@@ -327,9 +377,41 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     this._buttons.TryAdd(engBtn.id, engBtn);
                 }
                 engBtn = new Loupedeck.XplanePlugin.TypeClasses.Button();
+
+                var temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
+                temp.id = $"FuelLeft";
+                temp.caption = $"Fuel \r\n Left";
+                temp.command = Commands.NoneNone;
+                temp.unit = "%";
+                temp.format = "n1";
+                temp.GetImage = (size, btn) =>
+                {
+                    return SupportClasses.ButtonImages._standardImageGraph(size, BitmapColor.White, BitmapColor.Black, $"Fuel left:\r\n{btn.getDisplayValue()}", FuelLeft.getGraph(btn.value));
+
+                };
+                this._buttons.TryAdd(temp.id, temp);
+                temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
+
+                temp.id = $"FuelRight";
+                temp.caption = $"Fuel \r\n Right";
+                temp.command = Commands.NoneNone;
+                temp.unit = "%";
+                temp.format = "n1";
+                temp.GetImage = (size, btn) =>
+                {
+                    return SupportClasses.ButtonImages._standardImageGraph(size, BitmapColor.White, BitmapColor.Black, $"Fuel right:\r\n{btn.getDisplayValue()}", FuelRight.getGraph(btn.value));
+
+                };
+                this._buttons.TryAdd(temp.id, temp);
+                temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
+
+
             }
             base.FillButtons();
         }
+
+
+
 
         private void toggleEngineButtons(int num, TypeClasses.Button parentBtn)
         {
@@ -385,17 +467,11 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     },
                     RunCommand = (conn, btn) =>
                     {
-                        XPlaneConnector.DataRefElement engRun = new DataRefElement
-                        {
-                            DataRef = $"sim/flightmodel/engine/ENGN_running[{parentBtn.loop}]",
-                            Frequency = 5
-                        };
                         XPlaneCommand engIgn = new XPlaneCommand($"sim/ignition/engage_starter_{parentBtn.loop + 1}", $"sim/ignition/engage_starter_{parentBtn.loop + 1}");
                         if (this._starterEngaged[parentBtn.loop])
                         {
 
                             this._starterToken.Cancel();
-                            conn.Unsubscribe(engRun.DataRef);
                             this._starterEngaged[parentBtn.loop] = false;
                         }
 
@@ -423,7 +499,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                             }, token);
 
-                            this._starterToken.CancelAfter(10000);
+                            this._starterToken.CancelAfter(15000);
 
                         }
 
@@ -434,7 +510,6 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
 
                 //Update Dictionary
-                System.Threading.Thread.Sleep(20);
                 this.ButtonActionNamesChanged();
 
 
@@ -456,6 +531,11 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     }
 
                     _btnShown[num] = true;
+                    Debug.WriteLine("Extended Buttons");
+                    foreach (TypeClasses.Button btn in this._buttons.Values)
+                    {
+                        Debug.WriteLine($"{btn.prio} {btn.id} - {btn.caption}");
+                    }
                     SupportClasses.SubscriptionHandler.resetValues(this.DisplayName);
 
                     this.ButtonActionNamesChanged();
@@ -471,6 +551,11 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     this._buttons = new ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
                     this.FillButtons();
+                    Debug.WriteLine($"Standard-Buttons");
+                    foreach (TypeClasses.Button btn in this._buttons.Values)
+                    {
+                        Debug.WriteLine($"{btn.prio} {btn.id} - {btn.caption}");
+                    }
                     _btnShown[num] = false;
                     SupportClasses.SubscriptionHandler.resetValues(this.DisplayName);
                     this.ButtonActionNamesChanged();

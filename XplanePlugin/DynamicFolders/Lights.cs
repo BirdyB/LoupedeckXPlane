@@ -48,7 +48,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                         this.CommandImageChanged($"Landing");
                         break;
 
-                    case string s when s.Contains("sim/cockpit/electrical/taxi_lights_on"):
+                    case string s when s.Contains("sim/cockpit/electrical/taxi_light_on"):
                         this._buttons[$"Taxi"].value = value.value;
                         this.CommandImageChanged($"Taxi");
                         break;
@@ -98,7 +98,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 displayName = this.DisplayName,
                 dataRef = new DataRefElement
                 {
-                    DataRef = "sim/cockpit/electrical/taxi_lights_on",
+                    DataRef = "sim/cockpit/electrical/taxi_light_on",
                     Frequency = 5
                 }
             });
@@ -151,20 +151,17 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
             temp.GetImage = (size, btn) =>
             {
-                var builder = new BitmapBuilder(size);
+
 
                 if(btn.value == 0)
                 {
-                    builder.Clear(BitmapColor.White);
-                    builder.DrawText("Beacon \r\n off", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Beacon \r\n off", "", BitmapColor.White, BitmapColor.Black);
                 }
                 else
                 {
-                    builder.Clear(new BitmapColor(255,251,0));
-                    builder.DrawText("Beacon \r\n on", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Beacon \r\n on", "", new BitmapColor(255,251,0), BitmapColor.Black);
                 }
-                return builder.ToImage();
-                //sim/cockpit/electrical/beacon_lights_on
+
             };
 
             this._buttons.TryAdd(temp.id, temp);
@@ -176,19 +173,14 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
             temp.GetImage = (size, btn) =>
             {
-                var builder = new BitmapBuilder(size);
-
                 if (btn.value == 0)
                 {
-                    builder.Clear(BitmapColor.White);
-                    builder.DrawText("Landing \r\n off", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Landing \r\n off", "", BitmapColor.White, BitmapColor.Black);
                 }
                 else
                 {
-                    builder.Clear(new BitmapColor(255, 251, 0));
-                    builder.DrawText("Landing \r\n on", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Landing \r\n on", "", new BitmapColor(255, 251, 0), BitmapColor.Black);
                 }
-                return builder.ToImage();
             };
 
             this._buttons.TryAdd(temp.id, temp);
@@ -200,19 +192,14 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
             temp.GetImage = (size, btn) =>
             {
-                var builder = new BitmapBuilder(size);
-
                 if (btn.value == 0)
                 {
-                    builder.Clear(BitmapColor.White);
-                    builder.DrawText("Taxi \r\n off", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Taxi \r\n off", "", BitmapColor.White, BitmapColor.Black);
                 }
                 else
                 {
-                    builder.Clear(new BitmapColor(255, 251, 0));
-                    builder.DrawText("Taxi \r\n on", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Taxi \r\n on", "", new BitmapColor(255, 251, 0), BitmapColor.Black);
                 }
-                return builder.ToImage();
             };
 
             this._buttons.TryAdd(temp.id, temp);
@@ -224,19 +211,14 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
             temp.GetImage = (size, btn) =>
             {
-                var builder = new BitmapBuilder(size);
-
                 if (btn.value == 0)
                 {
-                    builder.Clear(BitmapColor.White);
-                    builder.DrawText("Nav \r\n off", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Nav \r\n off", "", BitmapColor.White, BitmapColor.Black);
                 }
                 else
                 {
-                    builder.Clear(new BitmapColor(255, 251, 0));
-                    builder.DrawText("Nav \r\n on", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Nav \r\n on", "", new BitmapColor(255, 251, 0), BitmapColor.Black);
                 }
-                return builder.ToImage();
             };
 
             this._buttons.TryAdd(temp.id, temp);
@@ -248,19 +230,14 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
             temp.GetImage = (size, btn) =>
             {
-                var builder = new BitmapBuilder(size);
-
                 if (btn.value == 0)
                 {
-                    builder.Clear(BitmapColor.White);
-                    builder.DrawText("Strobe \r\n off", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Strobe \r\n off", "", BitmapColor.White, BitmapColor.Black);
                 }
                 else
                 {
-                    builder.Clear(new BitmapColor(255, 251, 0));
-                    builder.DrawText("Strobe \r\n on", BitmapColor.Black);
+                    return SupportClasses.ButtonImages.customImage(size, "Strobe \r\n on", "", new BitmapColor(255, 251, 0), BitmapColor.Black);
                 }
-                return builder.ToImage();
             };
 
             this._buttons.TryAdd(temp.id, temp);

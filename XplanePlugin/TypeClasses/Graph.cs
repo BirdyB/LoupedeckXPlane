@@ -88,8 +88,6 @@ namespace Loupedeck.XplanePlugin.TypeClasses
             float deg = (((val - red_lo) * degPerVal) * -1) + 180;
             int x1 = this.getCircleX(deg, this.rLine) + x0;
             int y1 = y0 - (this.getCircleY(deg, this.rLine));
-            Debug.WriteLine($" Value {val} bei max Winkel {angle_max - angle_min} und max. Wert {red_hi} bei degPerVal{degPerVal} ergibt {deg}");
-            Debug.WriteLine($"Koordinaten für Linie x0={x0}, y0={y0}, x1={x1}, y1={y1}");
             this.builder.DrawLine(x0, y0, x1, y1, lineColor, strokeLine);
 
         }
@@ -181,7 +179,7 @@ namespace Loupedeck.XplanePlugin.TypeClasses
             winkel = (float)DegreesToRadians(winkel);
             temp = r * Math.Sin(winkel);
             y = (int)temp;
-            Debug.WriteLine($"r={r}, winkel={winkel}, Sin(winkel)={Math.Sin(winkel)}, temp={temp}, y={y}");
+
 
             return y;
 
@@ -194,8 +192,6 @@ namespace Loupedeck.XplanePlugin.TypeClasses
             winkel = (float)DegreesToRadians(winkel);
             temp = r * Math.Cos(winkel);
             x = (int)temp;
-
-            Debug.WriteLine($"r={r}, winkel={winkel}, Cos(winkel)={Math.Cos(winkel)}, temp={temp}, x={x}");
 
             return x;
 

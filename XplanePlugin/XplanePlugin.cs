@@ -25,6 +25,10 @@ namespace Loupedeck.XplanePlugin
             {
                 Debug.WriteLine(eventArgs.Exception.ToString());
             };
+            AppDomain.CurrentDomain.UnhandledException += (sender, eventArgs) =>
+            {
+                SupportClasses.DebugClass.ExceptionReceived(eventArgs.ExceptionObject as Exception,$"{((AppDomain)sender).ToString()}");
+            };
             try
             {
                 SupportClasses.ConnectorHandler.init();

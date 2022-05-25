@@ -71,7 +71,7 @@ namespace Loupedeck.XplanePlugin.TypeClasses
             {
                 outvalue = ((float)Math.Round(outvalue, this.round));
             }
-            output = outvalue.ToString(this.format) + "\r\n" + this.unit;
+            output = outvalue.ToString(this.format) + " " + this.unit;
             return output;
         }
 
