@@ -17,6 +17,7 @@ namespace Loupedeck.XplanePlugin.TypeClasses
         public XPlaneConnector.DataRefElement dataRef { get; set; }
         public float value { get; set; }
         public string displayName { get; set; }
+        public bool forceUpdate { get; set; }
 
 
         public int getIndex()

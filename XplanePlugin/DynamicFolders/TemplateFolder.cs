@@ -26,9 +26,6 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         protected ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button> _buttons = new ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
         protected ConcurrentDictionary<XPlaneConnector.DataRefElement, Action<DataRefElement, float>> _subscriptions = new ConcurrentDictionary<XPlaneConnector.DataRefElement, Action<DataRefElement, float>>();
 
-        //Variable if Standard-Settings are determined
-        protected virtual bool _FirstValueReceived { get; set; } = true;
-
         //Variables for specific Page
         private float _multiplier = 1;
 
@@ -73,11 +70,6 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 }
             }
 
-            while (!this._FirstValueReceived)
-            {
-                System.Threading.Thread.Sleep(10);
-            }
-
             this.FillAdjustments();
             if (this._adjustments.Count > 0)
             {
@@ -107,12 +99,6 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         private void Connector_OnRawReceive(String raw)
         {
             //Debug.WriteLine(DateTime.Now + " - " + raw);
-        }
-
-        private void Connector_OnDataRefReceived(DataRefElement dataRef)
-        {
-            // .WriteLine($"{DateTime.Now} - Received Data for {dataRef.DataRef} with value {dataRef.Value}");
-            this.FirstValuesSet();
         }
 
         private void Connector_OnLog(String message)
@@ -204,16 +190,6 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             {
                 return null;
             }
-        }
-
-        private void FirstValuesSet()
-        {
-            System.Threading.Thread.Sleep(100);
-            if (!this._FirstValueReceived)
-            {
-                this._FirstValueReceived = true;
-            }
-            // Debug.WriteLine("Erste Subscription erhalten");
         }
 
 
@@ -330,8 +306,8 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     }
                 }
 
-                var temp = this._buttons.OrderBy(x => x.Value.prio);
-                this._buttons = new ConcurrentDictionary<string, Button>(temp.ToDictionary(pair2 => pair2.Key, pair2 => pair2.Value));
+                //var temp = this._buttons.OrderBy(x => x.Value.prio);
+                //this._buttons = new ConcurrentDictionary<string, Button>(temp.ToDictionary(pair2 => pair2.Key, pair2 => pair2.Value));
                 var temp3 = this._buttons.OrderBy(x => x.Value.prio);
                 //var temp2 = this._buttons.ToList();
                 var temp2 = temp3.ToList();
@@ -418,32 +394,34 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             this._adjustments[actionParameter].apply(this.connector, diff, this._multiplier, this._adjustments[actionParameter]);
             this.AdjustmentValueChanged(actionParameter);
 
-            this.AdjustmentValueChanged(actionParameter);
-
         }
 
         public override void RunCommand(String commandParameter)
         {
-            try
+            Task.Run(() =>
             {
-                Debug.WriteLine($"{DateTime.Now} - Run Command for btn {commandParameter}");
-                if (this._adjustments.ContainsKey(commandParameter))
+                try
                 {
-                    this.connector.SendCommand(this._adjustments[commandParameter].command);
-                    this.AdjustmentValueChanged(commandParameter);
-                }
+                    Debug.WriteLine($"{DateTime.Now} - Run Command for btn {commandParameter}");
+                    if (this._adjustments.ContainsKey(commandParameter))
+                    {
+                        this.connector.SendCommand(this._adjustments[commandParameter].command);
+                        this.AdjustmentValueChanged(commandParameter);
+                    }
 
-                if (this._buttons.ContainsKey(commandParameter))
+                    if (this._buttons.ContainsKey(commandParameter))
+                    {
+                        this._buttons[commandParameter].RunCommand(this.connector, this._buttons[commandParameter]);
+                        this.CommandImageChanged(commandParameter);
+
+                    }
+                }
+                catch (Exception e)
                 {
-                    this._buttons[commandParameter].RunCommand(this.connector, this._buttons[commandParameter]);
-                    this.CommandImageChanged(commandParameter);
-
+                    string message = $"Class: {this.GetType().Name} - command parameter: {commandParameter}";
+                    SupportClasses.DebugClass.ExceptionReceived(e, message);
                 }
-            }catch(Exception e)
-            {
-                string message = $"Class: {this.GetType().Name} - command parameter: {commandParameter}";
-                SupportClasses.DebugClass.ExceptionReceived(e, message);
-            }
+            });
         }
 
         public Loupedeck.XplanePlugin.TypeClasses.Adjustment getEmptyAdjustment(string id1)

@@ -9,7 +9,6 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
     {
         public Lights()
         {
-            this._FirstValueReceived = true;
             this.DisplayName = "Lights";
             this.GroupName = "X-Plane";
         }
@@ -21,58 +20,107 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             return SupportClasses.ButtonImages.standardImage(imageSize, this.DisplayName, this.image, 25, 10, 30, 10, 50, 60, 10);
         }
 
-        private bool beacon = false;
-        private bool landing = false;
-        private bool taxi = false;
-        private bool nav = false;
-        private bool strobe = false;
+        public override Boolean Activate() {
+
+            SupportClasses.SubscriptionHandler.OnValueChanged += this.SubscriptionHandler_OnValueChanged;
+
+            return base.Activate();
+        }
+
+        private void SubscriptionHandler_OnValueChanged(TypeClasses.SubscriptionValue value)
+        {
+            if (value.displayName == this.DisplayName)
+            {
+                switch (value.dataRef.DataRef)
+                {
+                    //case string s when s.Contains("sim/cockpit/electrical/battery_array_on"):
+                    //    this._buttons[$"Battery {value.getIndex() + 1}"].value = value.value;
+                    //    this.CommandImageChanged($"Battery {value.getIndex() + 1}");
+                    //    break;
+
+                    case string s when s.Contains("sim/cockpit/electrical/beacon_lights_on"):
+                        this._buttons[$"Beacon"].value = value.value;
+                        this.CommandImageChanged($"Beacon");
+                        break;
+
+                    case string s when s.Contains("sim/cockpit/electrical/landing_lights_on"):
+                        this._buttons[$"Landing"].value = value.value;
+                        this.CommandImageChanged($"Landing");
+                        break;
+
+                    case string s when s.Contains("sim/cockpit/electrical/taxi_lights_on"):
+                        this._buttons[$"Taxi"].value = value.value;
+                        this.CommandImageChanged($"Taxi");
+                        break;
+
+                    case string s when s.Contains("sim/cockpit/electrical/nav_lights_on"):
+                        this._buttons[$"Nav"].value = value.value;
+                        this.CommandImageChanged($"Nav");
+                        break;
+
+                    case string s when s.Contains("sim/cockpit/electrical/strobe_lights_on"):
+                        this._buttons[$"Strobe"].value = value.value;
+                        this.CommandImageChanged($"Strobe");
+                        break;
+
+                    default:
+                        break;
+                }
+
+
+                }
+        }
 
         protected override void FillSubscriptions()
         {
-            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/beacon_lights_on", Frequency = 5 }, (e, v) =>
+            SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
             {
-                if (this.beacon != Convert.ToBoolean(v))
+                displayName = this.DisplayName,
+                dataRef = new DataRefElement
                 {
-                    this.beacon = Convert.ToBoolean(v);
-                    this.CommandImageChanged("Beacon");
-                }
-            });
-            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/landing_lights_on", Frequency = 5 }, (e, v) =>
-            {
-                if (this.landing != Convert.ToBoolean(v))
-                {
-                    this.landing = Convert.ToBoolean(v);
-                    this.CommandImageChanged("Landing");
-                }
-            });
-            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/taxi_light_on", Frequency = 5 }, (e, v) =>
-            {
-                if (this.taxi != Convert.ToBoolean(v))
-                {
-                    this.taxi = Convert.ToBoolean(v);
-                    this.CommandImageChanged("Taxi");
+                    DataRef = "sim/cockpit/electrical/beacon_lights_on",
+                    Frequency = 5
                 }
             });
 
-            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/nav_lights_on", Frequency = 5 }, (e, v) =>
+            SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
             {
-                if (this.nav != Convert.ToBoolean(v))
+                displayName = this.DisplayName,
+                dataRef = new DataRefElement
                 {
-                    this.nav = Convert.ToBoolean(v);
-                    this.CommandImageChanged("Nav");
+                    DataRef = "sim/cockpit/electrical/landing_lights_on",
+                    Frequency = 5
                 }
             });
 
-            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/strobe_lights_on", Frequency = 5 }, (e, v) =>
+            SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
             {
-                if (this.strobe != Convert.ToBoolean(v))
+                displayName = this.DisplayName,
+                dataRef = new DataRefElement
                 {
-                    this.strobe = Convert.ToBoolean(v);
-                    this.CommandImageChanged("Strobe");
+                    DataRef = "sim/cockpit/electrical/taxi_lights_on",
+                    Frequency = 5
+                }
+            });
+            SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
+            {
+                displayName = this.DisplayName,
+                dataRef = new DataRefElement
+                {
+                    DataRef = "sim/cockpit/electrical/nav_lights_on",
+                    Frequency = 5
                 }
             });
 
-
+            SupportClasses.SubscriptionHandler.subscribe(new TypeClasses.SubscriptionValue
+            {
+                displayName = this.DisplayName,
+                dataRef = new DataRefElement
+                {
+                    DataRef = "sim/cockpit/electrical/strobe_lights_on",
+                    Frequency = 5
+                }
+            });
 
             base.FillSubscriptions();
         }
@@ -105,7 +153,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             {
                 var builder = new BitmapBuilder(size);
 
-                if(this.beacon == false)
+                if(btn.value == 0)
                 {
                     builder.Clear(BitmapColor.White);
                     builder.DrawText("Beacon \r\n off", BitmapColor.Black);
@@ -130,7 +178,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             {
                 var builder = new BitmapBuilder(size);
 
-                if (this.landing == false)
+                if (btn.value == 0)
                 {
                     builder.Clear(BitmapColor.White);
                     builder.DrawText("Landing \r\n off", BitmapColor.Black);
@@ -154,7 +202,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             {
                 var builder = new BitmapBuilder(size);
 
-                if (this.taxi == false)
+                if (btn.value == 0)
                 {
                     builder.Clear(BitmapColor.White);
                     builder.DrawText("Taxi \r\n off", BitmapColor.Black);
@@ -178,7 +226,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             {
                 var builder = new BitmapBuilder(size);
 
-                if (this.nav == false)
+                if (btn.value == 0)
                 {
                     builder.Clear(BitmapColor.White);
                     builder.DrawText("Nav \r\n off", BitmapColor.Black);
@@ -202,7 +250,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             {
                 var builder = new BitmapBuilder(size);
 
-                if (this.strobe == false)
+                if (btn.value == 0)
                 {
                     builder.Clear(BitmapColor.White);
                     builder.DrawText("Strobe \r\n off", BitmapColor.Black);

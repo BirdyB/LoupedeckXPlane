@@ -19,15 +19,16 @@ namespace Loupedeck.XplanePlugin.SupportClasses
 
         public static void init()
         {
-         
+
         }
 
-        public static void subscribe(TypeClasses.SubscriptionValue sub) {
+        public static void subscribe(TypeClasses.SubscriptionValue sub)
+        {
             //Debug.WriteLine($"Adding subscription for {sub.dataRef.DataRef} for module {sub.displayName}");
             _subscriptions.Add(sub);
-            SupportClasses.ConnectorHandler.connector.Subscribe(sub.dataRef, 5, (element, value) => {
-            //Debug.WriteLine($"Received value {value} for DataRef { sub.dataRef.DataRef}");
-                if(sub.value != value)
+            SupportClasses.ConnectorHandler.connector.Subscribe(sub.dataRef, 5, (element, value) =>
+            {
+                if ((sub.value != value) || (sub.forceUpdate))
                 {
                     //Debug.WriteLine($"Value old: {sub.value} \t Value new: {value}");
                     sub.value = value;
@@ -38,12 +39,14 @@ namespace Loupedeck.XplanePlugin.SupportClasses
 
         }
 
-        public static void resetValues(string DisplayName) {
-            foreach(TypeClasses.SubscriptionValue sub in SubscriptionHandler._subscriptions)
+        public static void resetValues(string DisplayName)
+        {
+            foreach (TypeClasses.SubscriptionValue sub in SubscriptionHandler._subscriptions)
             {
-                if(sub.displayName == DisplayName)
+                if (sub.displayName == DisplayName)
                 {
                     sub.value = -1;
+                    sub.forceUpdate = true;
                 }
             }
         }
