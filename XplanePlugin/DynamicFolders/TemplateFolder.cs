@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
+using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Loupedeck.XplanePlugin.TypeClasses;
 using Loupedeck.XplanePlugin.SupportClasses;
@@ -17,10 +18,13 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         public XPlaneConnector.XPlaneConnector connector = SupportClasses.ConnectorHandler.connector;
 
         //Dictionarys for Adjustments, Buttons and Subscriptions
-        protected IDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment> _adjustments = new Dictionary<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment>();
-        protected IDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button> _buttons = new Dictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
-        protected IDictionary<XPlaneConnector.DataRefElement, Action<DataRefElement, float>> _subscriptions = new Dictionary<XPlaneConnector.DataRefElement, Action<DataRefElement, float>>();
-        // private List<KeyValuePair<string, Loupedeck.XplanePlugin.TypeClasses.Button>> _adjList;
+        //protected IDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment> _adjustments = new Dictionary<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment>();
+        //protected IDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button> _buttons = new Dictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
+        //protected IDictionary<XPlaneConnector.DataRefElement, Action<DataRefElement, float>> _subscriptions = new Dictionary<XPlaneConnector.DataRefElement, Action<DataRefElement, float>>();
+
+        protected ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment> _adjustments = new ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment>();
+        protected ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button> _buttons = new ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
+        protected ConcurrentDictionary<XPlaneConnector.DataRefElement, Action<DataRefElement, float>> _subscriptions = new ConcurrentDictionary<XPlaneConnector.DataRefElement, Action<DataRefElement, float>>();
 
         //Variable if Standard-Settings are determined
         protected virtual bool _FirstValueReceived { get; set; } = true;
@@ -48,46 +52,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         {
             try
             {
-                //this.connector.OnLog += this.Connector_OnLog;
-                //this.connector.OnDataRefReceived += this.Connector_OnDataRefReceived;
-                //this.connector.OnRawReceive += this.Connector_OnRawReceive;
                 this.connector.Start();
-                //this.FillSubscriptions();
-                //if (this._subscriptions.Count > 0)
-                //{
-                //    foreach (KeyValuePair<XPlaneConnector.DataRefElement, Action<DataRefElement, float>> pair in this._subscriptions)
-                //    {
-                //        this.connector.Subscribe(pair.Key, 5, pair.Value);
-
-                //    }
-                //}
-
-                //while (!this._FirstValueReceived)
-                //{
-                //    System.Threading.Thread.Sleep(10);
-                //}
-
-                //this.FillAdjustments();
-                //if (this._adjustments.Count > 0)
-                //{
-                //    foreach (KeyValuePair<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment> pair in this._adjustments)
-                //    {
-                //        if (pair.Value.element != null)
-                //        {
-                //            this.connector.Subscribe(pair.Value.element, 5, (e, v) =>
-                //            {
-                //                if (this._adjustments[pair.Key].freq != v)
-                //                {
-                //                    this._adjustments[pair.Key].freq = v;
-                //                //Debug.WriteLine("Update für Key " + pair.Key.ToString() + " mit Wert " + v.ToString());
-                //                this.AdjustmentValueChanged(pair.Key);
-                //                }
-                //            });
-                //        }
-                //    }
-                //}
-
-                //    this.FillButtons();
                 
             }catch(Exception e)
             {
@@ -176,7 +141,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             //    temp.format = "n2";
             //    temp.unit = "Mhz";
             //    temp.divider = 100;
-            //    this._adjustments.Add(temp.id, temp);
+            //    this._adjustments.TryAdd(temp.id, temp);
             //    temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             //}
 
@@ -191,6 +156,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.id = "Multiplier";
                 temp.command = Commands.NoneNone;
                 temp.caption = "Multiplier";
+                temp.sticky = true;
                 temp.bgcolor = BitmapColor.White;
                 temp.textcolor = BitmapColor.Black;
                 temp.RunCommand = (connector, command) =>
@@ -216,7 +182,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return SupportClasses.ButtonImages.standardImage(imageSize, button.caption + "\r\n" + this._multiplier, "");
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
             }
 
@@ -258,11 +224,11 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             try
             {
                 var temp = this._adjustments.OrderBy(x => x.Value.prio);
-                this._adjustments = temp.ToDictionary(pair2 => pair2.Key, pair2 => pair2.Value);
-                var temp2 = this._adjustments.ToList();
+                //this._adjustments = temp.ToDictionary(pair2 => pair2.Key, pair2 => pair2.Value);
+                //var temp2 = this._adjustments.ToList();
 
                 //foreach (KeyValuePair<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment> pair in this._adjustments)
-                foreach (KeyValuePair<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment> pair in temp2)
+                foreach (KeyValuePair<string, Loupedeck.XplanePlugin.TypeClasses.Adjustment> pair in temp)
                 {
                     freq.Add(this.CreateAdjustmentName(pair.Key));
                 }
@@ -345,11 +311,11 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 var kpSticky = new KeyValuePair<string, TypeClasses.Button>("", null);
 
 
-                foreach (KeyValuePair<string, TypeClasses.Button> btn in _buttons)
+                foreach (TypeClasses.Button btn in _buttons.Values)
                 {
-                    if (btn.Value.sticky == true)
+                    if (btn.sticky == true)
                     {
-                        kpEmptyOrSticky = btn;
+                        kpEmptyOrSticky = new KeyValuePair<string, TypeClasses.Button>(btn.id, btn);
                         break;
                     }
                 }
@@ -365,8 +331,10 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 }
 
                 var temp = this._buttons.OrderBy(x => x.Value.prio);
-                this._buttons = temp.ToDictionary(pair2 => pair2.Key, pair2 => pair2.Value);
-                var temp2 = this._buttons.ToList();
+                this._buttons = new ConcurrentDictionary<string, Button>(temp.ToDictionary(pair2 => pair2.Key, pair2 => pair2.Value));
+                var temp3 = this._buttons.OrderBy(x => x.Value.prio);
+                //var temp2 = this._buttons.ToList();
+                var temp2 = temp3.ToList();
 
                 int ctr = 0;
                 do
@@ -377,6 +345,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     temp2.Insert(ctr + 3, kpRight);
                     ctr = ctr + 12;
                 } while (ctr < temp2.Count);
+
 
                 //foreach (KeyValuePair<string, Loupedeck.XplanePlugin.TypeClasses.Button> pair in this._buttons)
                 foreach (KeyValuePair<string, Loupedeck.XplanePlugin.TypeClasses.Button> pair in temp2)
@@ -401,7 +370,8 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
             }catch(Exception e)
             {
-                SupportClasses.DebugClass.ExceptionReceived(e);
+                string message = $"Class: {this.GetType().Name}";
+                SupportClasses.DebugClass.ExceptionReceived(e, message);
             }
             return buttons;
         }

@@ -35,10 +35,15 @@ namespace Loupedeck.XplanePlugin.SupportClasses
         public static void ExceptionReceived(Exception e, string message="") {
             var st = new StackTrace(e, true);
             // Get the top stack frame
-            var frame = st.GetFrame(0);
+            Debug.WriteLine($"{e.InnerException} FrameCount:{st.FrameCount}");
+            foreach (var frame in st.GetFrames())
+            { var line = frame.GetFileLineNumber();
+                Debug.WriteLine($"{DateTime.Now} \t Received Exception: {e.Message} \t {e.Data} \t {e.Source} \t {frame} \t {line} \t with message \t {message}");
+            }
             // Get the line number from the stack frame
-            var line = frame.GetFileLineNumber();
-            Debug.WriteLine($"{DateTime.Now} \t Received Exception: {e.Message} \t {e.Data} \t {e.Source} \t {frame} \t {line} \t with message \t {message}");
+
+           
+
         }
 
         public static void MessageReceived(string message) {

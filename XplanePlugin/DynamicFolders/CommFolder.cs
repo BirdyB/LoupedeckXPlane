@@ -60,7 +60,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.format = "n2";
                 temp.unit = "Mhz";
                 temp.divider = 100;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("Com2"))
@@ -72,7 +72,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.format = "n2";
                 temp.unit = "Mhz";
                 temp.divider = 100;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("Nav1"))
@@ -84,7 +84,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.format = "n2";
                 temp.unit = "Mhz";
                 temp.divider = 100;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("Nav2"))
@@ -96,7 +96,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.format = "n2";
                 temp.unit = "Mhz";
                 temp.divider = 100;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("ADF1"))
@@ -108,7 +108,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.format = "n2";
                 temp.unit = "Mhz";
                 temp.divider = 100;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("ADF2"))
@@ -120,7 +120,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.format = "n2";
                 temp.unit = "Mhz";
                 temp.divider = 100;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("Transponder"))
@@ -136,7 +136,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.format = "n0";
                 temp.unit = "";
                 temp.divider = 1;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
 
@@ -156,7 +156,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.bgcolor = BitmapColor.White;
                 temp.textcolor = BitmapColor.Black;
 
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
             }
 
@@ -168,7 +168,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.bgcolor = BitmapColor.White;
                 temp.textcolor = BitmapColor.Black;
 
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
             }
 
@@ -179,7 +179,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.caption = "Com1\r\nTransmit";
                 temp.bgcolor = BitmapColor.Black;
                 temp.textcolor = BitmapColor.White;
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
             }
             if (!this._buttons.ContainsKey("TransponderOn"))
@@ -189,7 +189,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.command = Commands.TransponderTransponderOn;
                 temp.bgcolor = BitmapColor.Black;
                 temp.textcolor = BitmapColor.White;
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
             }
             if (!this._buttons.ContainsKey("TransponderOff"))
@@ -199,7 +199,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.command = Commands.TransponderTransponderOff;
                 temp.bgcolor = BitmapColor.Black;
                 temp.textcolor = BitmapColor.White;
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
             }
             if (!this._buttons.ContainsKey("TransponderStby"))
@@ -209,7 +209,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.command = Commands.TransponderTransponderStandby;
                 temp.bgcolor = BitmapColor.Black;
                 temp.textcolor = BitmapColor.White;
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
             }
             if (!this._buttons.ContainsKey("TransponderIdent"))
@@ -219,7 +219,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.command = Commands.TransponderTransponderIdent;
                 temp.bgcolor = BitmapColor.Black;
                 temp.textcolor = BitmapColor.White;
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
             }
             base.FillButtons();

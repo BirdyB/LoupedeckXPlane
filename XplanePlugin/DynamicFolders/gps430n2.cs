@@ -55,7 +55,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp.id = "Nav2KnobL";
@@ -109,7 +109,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     }
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp.id = "Nav2KnobR";
@@ -154,7 +154,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp.id = "Nav2ComVol";
@@ -185,7 +185,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp.id = "Nav2NavVol";
@@ -216,7 +216,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp = getEmptyAdjustment("Nav2Spacer");
@@ -228,7 +228,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             {
                 return "";
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
         }
         protected override void FillButtons()
@@ -261,7 +261,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 }
                 return builder.ToImage();
             };
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
             BitmapColor ColorBgNav2 = new BitmapColor(115, 253, 255);
 
@@ -269,91 +269,91 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             temp.caption = "Nav2\r\nCDI";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Cdi;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2OBS";
             temp.caption = "Nav2\r\nOBS";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Obs;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2MSG";
             temp.caption = "Nav2\r\nMSG";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Msg;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2FPL";
             temp.caption = "Nav2\r\nFPL";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Fpl;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2VNAV";
             temp.caption = "Nav2\r\nVNAV";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Vnav;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2PROC";
             temp.caption = "Nav2\r\nPROC";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Proc;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2CLR";
             temp.caption = "Nav2\r\nCLR";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Clr;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2ENT";
             temp.caption = "Nav2\r\nENT";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Ent;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2COMSwitch";
             temp.caption = "Nav2\r\nCom Act/Stby";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2ComFf;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2NAVSwitch";
             temp.caption = "Nav2\r\nNav Act/Stby";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2NavFf;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2MenuBtn";
             temp.caption = "Nav2\r\nMenu";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Menu;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2Direct";
             temp.caption = "Nav2\r\nDirect";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Direct;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Nav2Popup";
             temp.caption = "Nav2\r\nPopup";
             temp.bgcolor = ColorBgNav2;
             temp.command = Commands.GPSG430n2Popup;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             base.FillButtons();

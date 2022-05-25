@@ -63,7 +63,6 @@
     <Compile Include="TypeClasses\Button.cs" />
     <Compile Include="DynamicFolders\AutopilotFolder.cs" />
     <Compile Include="DynamicFolders\TemplateFolder.cs" />
-    <Compile Include="DynamicFolders\EngineFolder.cs" />
     <Compile Include="DynamicFolders\TestFolder.cs" />
     <Compile Include="DynamicFolders\gps430.cs" />
     <Compile Include="DynamicFolders\Electrics.cs" />

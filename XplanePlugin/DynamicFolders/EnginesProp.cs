@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-
+using System.Collections.Concurrent;
 using XPlaneConnector;
 using XPlaneConnector.DataRefs;
 
@@ -24,15 +24,8 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             return SupportClasses.ButtonImages.standardImage(imageSize, this.DisplayName, this.image, 25, 10, 30, 10, 50, 60, 10);
         }
 
-
-        public override Boolean Load()
-        {
-            return true;
-        }
-
         public override Boolean Activate()
         {
-
             Debug.WriteLine("Activation started");
             while (!SupportClasses.AirplaneData.complete)
             {
@@ -51,9 +44,9 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         {
             if (value.displayName == this.DisplayName)
             {
+                Debug.WriteLine($"{DateTime.Now} - Received update for Ref {value.dataRef.DataRef} with value {value.value}");
                 switch (value.dataRef.DataRef)
                 {
-
                     case string s when s.Contains("sim/flightmodel/engine/ENGN_running"):
                         this._buttons[$"cmdEngine {value.getIndex() + 1}"].value = value.value;
                         if (this._starterEngaged[value.getIndex()] && Convert.ToBoolean(this._buttons[$"cmdEngine {value.getIndex() + 1}"].value))
@@ -95,7 +88,9 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         public int num_engines;
         private bool[] _btnShown = new bool[8] { false, false, false, false, false, false, false, false };
         private bool[] _starterEngaged = new bool[8] { false, false, false, false, false, false, false, false };
+        Task toggleButtons;
         System.Threading.CancellationTokenSource _starterToken;
+
 
 
         protected override void FillSubscriptions()
@@ -157,18 +152,6 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
         protected override void FillAdjustments()
         {
             Loupedeck.XplanePlugin.TypeClasses.Adjustment temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
-            //if (!this._adjustments.ContainsKey("Com1"))
-            //{
-            //    temp.id = "Com1";
-            //    temp.element = DataRefs.CockpitRadiosCom1StdbyFreqHz;
-            //    temp.command = Commands.RadiosCom1StandyFlip;
-            //    temp.format = "n2";
-            //    temp.unit = "Mhz";
-            //    temp.divider = 100;
-            //    this._adjustments.Add(temp.id, temp);
-            //    temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
-            //}
-
             for (int i = 0; i < this.num_engines; i++)
             {
                 string engineref = $"sim/flightmodel/engine/ENGN_thro[{i}]";
@@ -187,7 +170,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     temp.maxvalue = 1;
                     temp.divider = 0.01F;
                     temp.setdivider = 100;
-                    this._adjustments.Add(temp.id, temp);
+                    this._adjustments.TryAdd(temp.id, temp);
 
                 }
                 catch
@@ -214,7 +197,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     temp.maxvalue = 1;
                     temp.divider = 0.01F;
                     temp.setdivider = 100;
-                    this._adjustments.Add(temp.id, temp);
+                    this._adjustments.TryAdd(temp.id, temp);
 
                 }
                 catch
@@ -241,7 +224,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     temp.maxvalue = 300;
                     temp.divider = 1;
                     temp.setdivider = 1;
-                    this._adjustments.Add(temp.id, temp);
+                    this._adjustments.TryAdd(temp.id, temp);
 
                 }
                 catch
@@ -275,7 +258,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 };
                 if (!this._buttons.ContainsKey(showThrottleBtn.id))
                 {
-                    this._buttons.Add(showThrottleBtn.id, showThrottleBtn);
+                    this._buttons.TryAdd(showThrottleBtn.id, showThrottleBtn);
                 }
                 showThrottleBtn = new Loupedeck.XplanePlugin.TypeClasses.Button();
             }
@@ -305,7 +288,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 };
                 if (!this._buttons.ContainsKey(pumpBtn.id))
                 {
-                    this._buttons.Add(pumpBtn.id, pumpBtn);
+                    this._buttons.TryAdd(pumpBtn.id, pumpBtn);
                 }
                 pumpBtn = new Loupedeck.XplanePlugin.TypeClasses.Button();
             }
@@ -341,172 +324,166 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 };
                 if (!this._buttons.ContainsKey(engBtn.id))
                 {
-                    this._buttons.Add(engBtn.id, engBtn);
+                    this._buttons.TryAdd(engBtn.id, engBtn);
                 }
                 engBtn = new Loupedeck.XplanePlugin.TypeClasses.Button();
             }
-
-            var refresh = new TypeClasses.Button
-            {
-                id = "Refresh",
-                caption = "Refresh",
-                command = Commands.NoneNone,
-                RunCommand = (conn, btn) =>
-                {
-                    SupportClasses.SubscriptionHandler.resetValues(this.DisplayName);
-                    foreach (KeyValuePair<string, TypeClasses.Button> refreshbtn in this._buttons)
-                    {
-                        this.CommandImageChanged(refreshbtn.Key);
-                    }
-                }
-            };
-            if (!this._buttons.ContainsKey(refresh.id))
-            {
-                this._buttons.Add(refresh.id, refresh);
-            }
-
-
-
             base.FillButtons();
         }
 
         private void toggleEngineButtons(int num, TypeClasses.Button parentBtn)
         {
-
-            string btnid = "Eng" + num;
-            string btnAddId;
-            IDictionary<string, TypeClasses.Button> engineButtons = new Dictionary<string, TypeClasses.Button>(); //Dictionary for additional Buttons for each Engine
-
-            btnAddId = btnid + "MagDown";
-            engineButtons.Add(btnAddId, new TypeClasses.Button
+            if(this.toggleButtons != null)
             {
-                id = btnAddId,
-                caption = parentBtn.caption + "\r\n" + "Mag Down",
-                prio = parentBtn.prio + 1,
-                command = new XPlaneConnector.XPlaneCommand($"sim/magnetos/magnetos_down_{parentBtn.loop + 1}", $"Magneto {parentBtn.loop + 1} down"),
-            });
-            ;
-
-            btnAddId = btnid + "MagUp";
-            engineButtons.Add(btnAddId, new TypeClasses.Button
-            {
-                id = btnAddId,
-                caption = parentBtn.caption + "\r\n" + "Mag Up",
-                prio = parentBtn.prio + 2,
-                command = new XPlaneConnector.XPlaneCommand($"sim/magnetos/magnetos_up_{parentBtn.loop + 1}", $"Magneto {parentBtn.loop + 1} up"),
-            });
-
-            btnAddId = btnid + "Ignition";
-            engineButtons.Add(btnAddId, new TypeClasses.Button
-            {
-                id = btnAddId,
-                caption = parentBtn.caption + "\r\n" + "Ignition",
-                prio = parentBtn.prio + 3,
-                command = null,
-                GetImage = (imageSize, btn) =>
+                if (this.toggleButtons.Status == TaskStatus.Running)
                 {
-                    if (this._starterEngaged[parentBtn.loop])
-                    {
-                        return SupportClasses.ButtonImages.activeImage(imageSize, btn.caption, "");
-                    }
-                    else
-                    {
-                        return SupportClasses.ButtonImages.standardImage(imageSize, btn.caption, "");
-                    }
+                    return;
+                }
+            }
+            this.toggleButtons = Task.Run(() => {
+                string btnid = "Eng" + num;
+                string btnAddId;
+                IDictionary<string, TypeClasses.Button> engineButtons = new Dictionary<string, TypeClasses.Button>(); //Dictionary for additional Buttons for each Engine
 
-                },
-                RunCommand = (conn, btn) =>
+                btnAddId = btnid + "MagDown";
+                engineButtons.Add(btnAddId, new TypeClasses.Button
                 {
-                    XPlaneConnector.DataRefElement engRun = new DataRefElement
+                    id = btnAddId,
+                    caption = parentBtn.caption + "\r\n" + "Mag Down",
+                    prio = parentBtn.prio + 1,
+                    command = new XPlaneConnector.XPlaneCommand($"sim/magnetos/magnetos_down_{parentBtn.loop + 1}", $"Magneto {parentBtn.loop + 1} down"),
+                });
+                ;
+
+                btnAddId = btnid + "MagUp";
+                engineButtons.Add(btnAddId, new TypeClasses.Button
+                {
+                    id = btnAddId,
+                    caption = parentBtn.caption + "\r\n" + "Mag Up",
+                    prio = parentBtn.prio + 2,
+                    command = new XPlaneConnector.XPlaneCommand($"sim/magnetos/magnetos_up_{parentBtn.loop + 1}", $"Magneto {parentBtn.loop + 1} up"),
+                });
+
+                btnAddId = btnid + "Ignition";
+                engineButtons.Add(btnAddId, new TypeClasses.Button
+                {
+                    id = btnAddId,
+                    caption = parentBtn.caption + "\r\n" + "Ignition",
+                    prio = parentBtn.prio + 3,
+                    command = null,
+                    GetImage = (imageSize, btn) =>
                     {
-                        DataRef = $"sim/flightmodel/engine/ENGN_running[{parentBtn.loop}]",
-                        Frequency = 5
-                    };
-                    XPlaneCommand engIgn = new XPlaneCommand($"sim/ignition/engage_starter_{parentBtn.loop + 1}", $"sim/ignition/engage_starter_{parentBtn.loop + 1}");
-                    if (this._starterEngaged[parentBtn.loop])
-                    {
-
-                        this._starterToken.Cancel();
-                        conn.Unsubscribe(engRun.DataRef);
-                        this._starterEngaged[parentBtn.loop] = false;
-                    }
-
-
-
-                    if (!this._starterEngaged[parentBtn.loop])
-                    {
-                        this._starterEngaged[parentBtn.loop] = true;
-                        this.CommandImageChanged(btn.id);
-                        this._starterToken = new System.Threading.CancellationTokenSource();
-                        var token = this._starterToken.Token;
-                        Task.Run(() =>
+                        if (this._starterEngaged[parentBtn.loop])
                         {
-                            while (true)
-                            {
-                                conn.SendCommand(engIgn);
-                                System.Threading.Thread.Sleep(50);
-                                if (this._starterToken.IsCancellationRequested)
-                                {
-                                    this._starterEngaged[parentBtn.loop] = false;
-                                    this.CommandImageChanged(btn.id);
-                                    break;
-                                }
-                            }
+                            return SupportClasses.ButtonImages.activeImage(imageSize, btn.caption, "");
+                        }
+                        else
+                        {
+                            return SupportClasses.ButtonImages.standardImage(imageSize, btn.caption, "");
+                        }
 
-                        }, token);
-
-                        this._starterToken.CancelAfter(10000);
-
-                    }
-
-                },
-            });
-
-
-
-
-            //Update Dictionary
-            System.Threading.Thread.Sleep(20);
-            this.ButtonActionNamesChanged();
-
-
-
-            if (!_btnShown[num])
-            {
-                this._buttons = new Dictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
-                this.FillButtons();
-                foreach (KeyValuePair<string, TypeClasses.Button> engineButton in engineButtons)
-                {
-                    if (!this._buttons.ContainsKey(engineButton.Value.id))
+                    },
+                    RunCommand = (conn, btn) =>
                     {
-                        this._buttons.Add(engineButton.Key, engineButton.Value);
-                    }
-                }
-                for (int i = 0; i < _btnShown.Length; i++)
+                        XPlaneConnector.DataRefElement engRun = new DataRefElement
+                        {
+                            DataRef = $"sim/flightmodel/engine/ENGN_running[{parentBtn.loop}]",
+                            Frequency = 5
+                        };
+                        XPlaneCommand engIgn = new XPlaneCommand($"sim/ignition/engage_starter_{parentBtn.loop + 1}", $"sim/ignition/engage_starter_{parentBtn.loop + 1}");
+                        if (this._starterEngaged[parentBtn.loop])
+                        {
+
+                            this._starterToken.Cancel();
+                            conn.Unsubscribe(engRun.DataRef);
+                            this._starterEngaged[parentBtn.loop] = false;
+                        }
+
+
+
+                        if (!this._starterEngaged[parentBtn.loop])
+                        {
+                            this._starterEngaged[parentBtn.loop] = true;
+                            this.CommandImageChanged(btn.id);
+                            this._starterToken = new System.Threading.CancellationTokenSource();
+                            var token = this._starterToken.Token;
+                            Task.Run(() =>
+                            {
+                                while (true)
+                                {
+                                    conn.SendCommand(engIgn);
+                                    System.Threading.Thread.Sleep(50);
+                                    if (this._starterToken.IsCancellationRequested)
+                                    {
+                                        this._starterEngaged[parentBtn.loop] = false;
+                                        this.CommandImageChanged(btn.id);
+                                        break;
+                                    }
+                                }
+
+                            }, token);
+
+                            this._starterToken.CancelAfter(10000);
+
+                        }
+
+                    },
+                });
+
+
+
+
+                //Update Dictionary
+                System.Threading.Thread.Sleep(20);
+                this.ButtonActionNamesChanged();
+
+
+
+                if (!_btnShown[num])
                 {
-                    this._btnShown[i] = false;
+                    this._buttons = new ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
+                    this.FillButtons();
+                    foreach (KeyValuePair<string, TypeClasses.Button> engineButton in engineButtons)
+                    {
+                        if (!this._buttons.ContainsKey(engineButton.Value.id))
+                        {
+                            this._buttons.TryAdd(engineButton.Key, engineButton.Value);
+                        }
+                    }
+                    for (int i = 0; i < _btnShown.Length; i++)
+                    {
+                        this._btnShown[i] = false;
+                    }
+
+                    _btnShown[num] = true;
+                    SupportClasses.SubscriptionHandler.resetValues(this.DisplayName);
+
+                    this.ButtonActionNamesChanged();
+                    foreach (TypeClasses.Button btn in _buttons.Values)
+                    {
+                        this.CommandImageChanged(btn.id);
+                    }
+
+
+
                 }
+                else
+                {
+                    this._buttons = new ConcurrentDictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
+                    this.FillButtons();
+                    _btnShown[num] = false;
+                    SupportClasses.SubscriptionHandler.resetValues(this.DisplayName);
+                    this.ButtonActionNamesChanged();
+                    foreach (TypeClasses.Button btn in _buttons.Values)
+                    {
+                        this.CommandImageChanged(btn.id);
+                    }
 
-                _btnShown[num] = true;
-                System.Threading.Thread.Sleep(20);
 
-                this.ButtonActionNamesChanged();
-
-                SupportClasses.SubscriptionHandler.resetValues(this.DisplayName);
-
-            }
-            else
-            {
-                this._buttons = new Dictionary<string, Loupedeck.XplanePlugin.TypeClasses.Button>();
-                this.FillButtons();
-                _btnShown[num] = false;
-                System.Threading.Thread.Sleep(20);
-                this.ButtonActionNamesChanged();
-
-                SupportClasses.SubscriptionHandler.resetValues(this.DisplayName);
-
-            }
+                }
+            });
         }
+
 
     }
 

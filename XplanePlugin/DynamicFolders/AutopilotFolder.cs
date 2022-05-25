@@ -81,7 +81,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             //    temp.format = "n2";
             //    temp.unit = "Mhz";
             //    temp.divider = 100;
-            //    this._adjustments.Add(temp.id, temp);
+            //    this._adjustments.TryAdd(temp.id, temp);
             //    temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             //}
 
@@ -95,7 +95,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.round = 0;
                 temp.divider = 1;
                 temp.showPicture = false;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("Heading"))
@@ -107,7 +107,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.unit = "";
                 temp.divider = 1;
                 temp.showPicture = false;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("Alt"))
@@ -119,7 +119,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.unit = "ft";
                 temp.divider = 1;
                 temp.showPicture = false;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             if (!this._adjustments.ContainsKey("VSpeed"))
@@ -131,7 +131,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.unit = "ft/min";
                 temp.divider = 1;
                 temp.showPicture = false;
-                this._adjustments.Add(temp.id, temp);
+                this._adjustments.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
             }
             base.FillAdjustments();
@@ -149,7 +149,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                    temp.image = "headphones.png";
                    temp.textcolor = BitmapColor.Black;
 
-                   this._buttons.Add(temp.id, temp);
+                   this._buttons.TryAdd(temp.id, temp);
                    temp = new TypeClasses.Button();
                }
 
@@ -202,7 +202,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     return builder.ToImage();
                 };
 
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "TEST";
@@ -215,7 +215,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     conn.SetDataRefValue(new DataRefElement { DataRef = "sim/cockpit/autopilot/autopilot_state" }, 512);
                 };
 
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "AltVS";
@@ -227,7 +227,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     return getAPImage(size, btn);
                 };
 
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "AltArm";
@@ -238,7 +238,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     return getAPImage(size, btn);
                 };
 
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "FDIR";
@@ -269,7 +269,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                     return builder.ToImage();
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
 
@@ -277,19 +277,19 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 temp.id = "HSINav1";
                 temp.caption = "HSI\r\nNav1";
                 temp.command = Commands.AutopilotHsiSelectNav1;
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "HSINav2";
                 temp.caption = "HSI\r\nNav2";
                 temp.command = Commands.AutopilotHsiSelectNav2;
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "HSIGps";
                 temp.caption = "HSI\r\nGPS";
                 temp.command = Commands.AutopilotHsiSelectGps;
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "Autothrottle";
@@ -356,7 +356,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                     return builder.ToImage();
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "Autothrottle N1";
@@ -386,7 +386,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     }
                     return builder.ToImage();
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "Heading Select";
@@ -397,7 +397,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "Heading Hold";
@@ -408,7 +408,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "AP Track";
@@ -419,7 +419,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "HDG Nav";
@@ -429,7 +429,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "Nav";
@@ -439,7 +439,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "VSI";
@@ -450,7 +450,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "Glideslope";
@@ -461,7 +461,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "GPS Steering";
@@ -472,7 +472,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "GPS Climb";
@@ -482,7 +482,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
                 temp.id = "GPS Descend";
@@ -492,7 +492,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 {
                     return getAPImage(size, btn);
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new TypeClasses.Button();
 
             }
@@ -501,7 +501,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
         protected override void FillSubscriptions()
         {
-            this._subscriptions.Add(DataRefs.CockpitAutopilotAutopilotMode, (e, v) =>
+            this._subscriptions.TryAdd(DataRefs.CockpitAutopilotAutopilotMode, (e, v) =>
             {
                 if (this._autopilotAct != v)
                 {
@@ -510,7 +510,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 }
             });
 
-            this._subscriptions.Add(DataRefs.CockpitAutopilotAutopilotState, (e, v) =>
+            this._subscriptions.TryAdd(DataRefs.CockpitAutopilotAutopilotState, (e, v) =>
             {
                 if (this._autopilotState != v)
                 {

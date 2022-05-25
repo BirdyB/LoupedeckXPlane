@@ -222,7 +222,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 };
 
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             }
@@ -264,7 +264,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     }
                 };
 
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             }
@@ -285,7 +285,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     return SupportClasses.ButtonImages._standardImageGraph(size, BitmapColor.White, BitmapColor.Black, $"Bat {btn.loop + 1}:\r\n{btn.getDisplayValue()}",BatGraph.getGraph(btn.value));
 
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
             }
 
@@ -303,7 +303,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     return SupportClasses.ButtonImages._standardImageGraph(size, BitmapColor.White, BitmapColor.Black, $"Bat {btn.loop + 1}:\r\n{btn.getDisplayValue()}", BatAmp.getGraph(btn.value));
 
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
             }
 
@@ -321,7 +321,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     return SupportClasses.ButtonImages._standardImageGraph(size, BitmapColor.White, BitmapColor.Black, $"Gen {btn.loop + 1}:\r\n{btn.getDisplayValue()}", GenAmp.getGraph(btn.value));
 
                 };
-                this._buttons.Add(temp.id, temp);
+                this._buttons.TryAdd(temp.id, temp);
                 temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
             }
 

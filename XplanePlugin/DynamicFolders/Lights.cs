@@ -29,7 +29,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
         protected override void FillSubscriptions()
         {
-            this._subscriptions.Add(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/beacon_lights_on", Frequency = 5 }, (e, v) =>
+            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/beacon_lights_on", Frequency = 5 }, (e, v) =>
             {
                 if (this.beacon != Convert.ToBoolean(v))
                 {
@@ -37,7 +37,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     this.CommandImageChanged("Beacon");
                 }
             });
-            this._subscriptions.Add(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/landing_lights_on", Frequency = 5 }, (e, v) =>
+            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/landing_lights_on", Frequency = 5 }, (e, v) =>
             {
                 if (this.landing != Convert.ToBoolean(v))
                 {
@@ -45,7 +45,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     this.CommandImageChanged("Landing");
                 }
             });
-            this._subscriptions.Add(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/taxi_light_on", Frequency = 5 }, (e, v) =>
+            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/taxi_light_on", Frequency = 5 }, (e, v) =>
             {
                 if (this.taxi != Convert.ToBoolean(v))
                 {
@@ -54,7 +54,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 }
             });
 
-            this._subscriptions.Add(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/nav_lights_on", Frequency = 5 }, (e, v) =>
+            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/nav_lights_on", Frequency = 5 }, (e, v) =>
             {
                 if (this.nav != Convert.ToBoolean(v))
                 {
@@ -63,7 +63,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 }
             });
 
-            this._subscriptions.Add(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/strobe_lights_on", Frequency = 5 }, (e, v) =>
+            this._subscriptions.TryAdd(new XPlaneConnector.DataRefElement { DataRef = "sim/cockpit/electrical/strobe_lights_on", Frequency = 5 }, (e, v) =>
             {
                 if (this.strobe != Convert.ToBoolean(v))
                 {
@@ -90,7 +90,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             temp.maxvalue = 1;
             temp.divider = 0.01F;
             temp.setdivider = 100;
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
 
 
             base.FillAdjustments();
@@ -119,7 +119,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 //sim/cockpit/electrical/beacon_lights_on
             };
 
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new TypeClasses.Button();
 
             temp.id = "Landing";
@@ -143,7 +143,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 return builder.ToImage();
             };
 
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new TypeClasses.Button();
 
             temp.id = "Taxi";
@@ -167,7 +167,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 return builder.ToImage();
             };
 
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new TypeClasses.Button();
 
             temp.id = "Nav";
@@ -191,7 +191,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 return builder.ToImage();
             };
 
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new TypeClasses.Button();
 
             temp.id = "Strobe";
@@ -215,7 +215,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 return builder.ToImage();
             };
 
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new TypeClasses.Button();
 
             base.FillButtons();

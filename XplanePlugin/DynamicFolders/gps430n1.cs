@@ -53,7 +53,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp.id = "KnobL";
@@ -105,7 +105,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                     }
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp.id = "KnobR";
@@ -149,7 +149,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp.id = "ComVol";
@@ -180,7 +180,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp.id = "NavVol";
@@ -211,7 +211,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
 
                 }
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
 
             temp = getEmptyAdjustment("Spacer");
@@ -223,7 +223,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             {
                 return "";
             };
-            this._adjustments.Add(temp.id, temp);
+            this._adjustments.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Adjustment();
         }
         protected override void FillButtons() {
@@ -233,79 +233,79 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
             temp.caption = "CDI";
             temp.prio = 2;
             temp.command = Commands.GPSG430n1Cdi;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "OBS";
             temp.caption = "OBS";
             temp.command = Commands.GPSG430n1Obs;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "MSG";
             temp.caption = "MSG";
             temp.command = Commands.GPSG430n1Msg;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "FPL";
             temp.caption = "FPL";
             temp.command = Commands.GPSG430n1Fpl;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "VNAV";
             temp.caption = "VNAV";
             temp.command = Commands.GPSG430n1Vnav;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "PROC";
             temp.caption = "PROC";
             temp.command = Commands.GPSG430n1Proc;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "CLR";
             temp.caption = "CLR";
             temp.command = Commands.GPSG430n1Clr;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "ENT";
             temp.caption = "ENT";
             temp.command = Commands.GPSG430n1Ent;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "COMSwitch";
             temp.caption = "Com Act/Stby";
             temp.command = Commands.GPSG430n1ComFf;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "NAVSwitch";
             temp.caption = "Nav Act/Stby";
             temp.command = Commands.GPSG430n1NavFf;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "MenuBtn";
             temp.caption = "Menu";
             temp.command = Commands.GPSG430n1Menu;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Direct";
             temp.caption = "Direct";
             temp.command = Commands.GPSG430n1Direct;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Popup";
             temp.caption = "Popup";
             temp.command = Commands.GPSG430n1Popup;
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
 
             temp.id = "Fine";
@@ -334,7 +334,7 @@ namespace Loupedeck.XplanePlugin.DynamicFolders
                 }
                 return builder.ToImage();
             };
-            this._buttons.Add(temp.id, temp);
+            this._buttons.TryAdd(temp.id, temp);
             temp = new Loupedeck.XplanePlugin.TypeClasses.Button();
             base.FillButtons();
         } 
